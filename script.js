@@ -1,12 +1,33 @@
+// Constants
 const buttonEl = document.getElementById("roll-button");
 const diceEl = document.getElementById("dice");
+const rollHistoryEl = document.getElementById("roll-history");
 
+// Array history
+let historyList = [];
+
+// Roll Dice Function
 function rollDice() {
   const rollResult = Math.floor(Math.random() * 6) + 1;
   const diceFace = getDiceFace(rollResult);
   diceEl.innerHTML = diceFace;
+  historyList.push(rollResult);
+  updateRollHistory();
 }
 
+// Update Roll History
+function updateRollHistory() {
+  rollHistoryEl.innerHTML = "";
+  for (let i = 0; i < historyList.length; i++) {
+    const listItem = document.createElement("li");
+    listItem.innerHTML = `Roll ${i + 1} :<span>${getDiceFace(
+      historyList[i]
+    )}</span>`;
+    rollHistoryEl.appendChild(listItem);
+  }
+}
+
+// Get Dice Face using Random Function
 function getDiceFace(rollResult) {
   switch (rollResult) {
     case 1:
@@ -32,6 +53,7 @@ function getDiceFace(rollResult) {
   }
 }
 
+// Listen for Click of Button Event
 buttonEl.addEventListener("click", () => {
   diceEl.classList.add("roll-animation");
   setTimeout(() => {
