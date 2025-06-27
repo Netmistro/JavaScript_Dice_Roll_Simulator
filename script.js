@@ -1,63 +1,64 @@
-// Constants
+// Modern, responsive Dice Roll Simulator JS
+
 const buttonEl = document.getElementById("roll-button");
 const diceEl = document.getElementById("dice");
 const rollHistoryEl = document.getElementById("roll-history");
 
-// Array history
 let historyList = [];
 
-// Roll Dice Function
+// Unicode dice faces 1-6: \u2680 - \u2685
+const diceFaces = [
+  "&#9856;", // 1
+  "&#9857;", // 2
+  "&#9858;", // 3
+  "&#9859;", // 4
+  "&#9860;", // 5
+  "&#9861;", // 6
+];
+
 function rollDice() {
   const rollResult = Math.floor(Math.random() * 6) + 1;
-  const diceFace = getDiceFace(rollResult);
-  diceEl.innerHTML = diceFace;
-  historyList.push(rollResult);
+  diceEl.innerHTML = diceFaces[rollResult - 1];
+  historyList.unshift(rollResult); // add to front for newest-on-top
   updateRollHistory();
 }
 
-// Update Roll History
 function updateRollHistory() {
   rollHistoryEl.innerHTML = "";
-  for (let i = 0; i < historyList.length; i++) {
+  historyList.slice(0, 8).forEach((roll, idx) => {
     const listItem = document.createElement("li");
-    listItem.innerHTML = `Roll ${i + 1} :<span>${getDiceFace(
-      historyList[i]
-    )}</span>`;
+    listItem.innerHTML = `Roll ${historyList.length - idx} <span>${
+      diceFaces[roll - 1]
+    }</span>`;
     rollHistoryEl.appendChild(listItem);
-  }
+  });
 }
 
-// Get Dice Face using Random Function
-function getDiceFace(rollResult) {
-  switch (rollResult) {
-    case 1:
-      return "&#9856;";
-      break;
-    case 2:
-      return "&#9857;";
-      break;
-    case 3:
-      return "&#9858;";
-      break;
-    case 4:
-      return "&#9859;";
-      break;
-    case 5:
-      return "&#9860;";
-      break;
-    case 6:
-      return "&#9861;";
-      break;
-    default:
-      return "";
-  }
-}
-
-// Listen for Click of Button Event
-buttonEl.addEventListener("click", () => {
+function animateDice() {
   diceEl.classList.add("roll-animation");
   setTimeout(() => {
     diceEl.classList.remove("roll-animation");
     rollDice();
-  }, 1000);
+  }, 900);
+}
+
+buttonEl.addEventListener("click", animateDice);
+
+// Accessibility: Allow rolling with Enter/Space when focused
+buttonEl.addEventListener("keyup", (event) => {
+  if (event.key === " " || event.key === "Enter") {
+    animateDice();
+  }
+});
+
+// Responsive: On resize, adjust dice size for very small screens (handled in CSS)
+
+// Optional: Add keyboard support for dice
+diceEl.tabIndex = 0;
+diceEl.setAttribute("role", "img");
+diceEl.setAttribute("aria-label", "Current dice face");
+diceEl.addEventListener("keyup", (event) => {
+  if (event.key === " " || event.key === "Enter") {
+    animateDice();
+  }
 });
